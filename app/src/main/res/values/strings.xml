@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">PhoneBook</string>
     <string name="contacts">Contacts</string>
+    <string name="add" />
+    <string name="search" />
+    <string name="delete" />
+    <string name="contact" />
+    <string name="first_name" />
+    <string name="add_new_contact">add new contact</string>
+    <string name="search_contact">search contact</string>
+    <string name="delete_contact">delete contact</string>
+    <string name="Име">Име</string>
+    <string name="Фамилия">Фамилия</string>
+    <string name="Телефон">Телефонен номер</string>
 </resources>
