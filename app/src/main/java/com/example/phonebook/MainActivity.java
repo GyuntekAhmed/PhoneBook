@@ -1,6 +1,7 @@
 package com.example.phonebook;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -8,6 +9,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,18 +47,27 @@ public class MainActivity extends AppCompatActivity {
             if (firstName.isEmpty() && phoneNumber.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Моля попълнете празните полета", Toast.LENGTH_SHORT).show();
             } else {
-                Contact newContact = new Contact(firstName, lastName, phoneNumber);
 
-                contactManager.addContact(newContact);
-                contacts.add(newContact);
-                contactAdapter.notifyDataSetChanged();
+                if (contactManager.searchContact(phoneNumber) != null){
+                    Toast.makeText(MainActivity.this, "Телефонният номер вече съществува", Toast.LENGTH_SHORT).show();
+                } else {
+                    Contact newContact = new Contact(firstName, lastName, phoneNumber);
 
-                Toast.makeText(MainActivity.this, "Контакта е добавен успешно.", Toast.LENGTH_SHORT).show();
+                    contactManager.addContact(newContact);
+                    contacts.add(newContact);
+
+                    Collections.sort(contacts, (contact1, contact2) ->
+                            contact1.getFirstName().compareToIgnoreCase(contact2.getFirstName()));
+
+                    contactAdapter.notifyDataSetChanged();
+
+                    Toast.makeText(MainActivity.this, "Контакта е добавен успешно.", Toast.LENGTH_SHORT).show();
+
+                    editTextFirstName.setText("");
+                    editTextLastName.setText("");
+                    editTextPhoneNumber.setText("");
+                }
             }
-
-            editTextFirstName.setText("");
-            editTextLastName.setText("");
-            editTextPhoneNumber.setText("");
         });
 
         btnSearchContact.setOnClickListener(v -> {
