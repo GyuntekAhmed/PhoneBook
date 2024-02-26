@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
     <TextView
@@ -18,51 +19,58 @@
 
     <EditText
         android:id="@+id/editTextFirstName"
-        android:layout_width="205dp"
+        android:layout_width="0dp"
+        android:layout_marginStart="10dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
+        android:autofillHints=""
+        android:background="#F5F5F5"
         android:hint="@string/Име"
+        android:inputType="text"
         android:minHeight="48dp"
+        android:textColorHint="#455A64"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.077"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.028"
-        android:inputType="text"
-        android:autofillHints="" />
+        app:layout_constraintVertical_bias="0.028" />
 
     <EditText
         android:id="@+id/editTextLastName"
-        android:layout_width="198dp"
+        android:layout_width="0dp"
+        android:layout_marginStart="10dp"
         android:layout_height="48dp"
         android:layout_below="@id/editTextFirstName"
         android:layout_marginTop="88dp"
+        android:autofillHints=""
+        android:background="#F5F5F5"
         android:hint="@string/Фамилия"
         android:inputType="text"
         android:minHeight="48dp"
-        android:textColorHint="#546E7A"
+        android:textColorHint="#455A64"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.075"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextPhoneNumber"
-        android:layout_width="190dp"
+        android:layout_width="0dp"
+        android:layout_marginStart="10dp"
         android:layout_height="48dp"
         android:layout_below="@id/editTextLastName"
         android:layout_marginTop="144dp"
+        android:autofillHints=""
+        android:background="#F5F5F5"
         android:hint="@string/Телефон"
         android:inputType="phone"
         android:minHeight="48dp"
-        android:textColorHint="#546E7A"
+        android:textColorHint="#455A64"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.072"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="407dp"
@@ -76,7 +84,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="#F5F5F5" >
 
             <Button
                 android:id="@+id/btnAddContact"
