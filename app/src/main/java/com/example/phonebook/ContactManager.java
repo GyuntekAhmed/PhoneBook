@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactManager {
-    private List<Contact> contacts;
+    private final List<Contact> contacts;
 
     public ContactManager() {
         this.contacts = new ArrayList<>();
@@ -14,12 +14,12 @@ public class ContactManager {
         contacts.add(contact);
     }
 
-    public void editContact(Contact oldContact, Contact newContact){
-        if (contacts.contains(oldContact)){
-            int index = contacts.indexOf(oldContact);
-            contacts.set(index, newContact);
-        }
-    }
+//    public void editContact(Contact oldContact, Contact newContact){
+//        if (contacts.contains(oldContact)){
+//            int index = contacts.indexOf(oldContact);
+//            contacts.set(index, newContact);
+//        }
+//    }
 
     public Contact searchContact(String keyword) {
 

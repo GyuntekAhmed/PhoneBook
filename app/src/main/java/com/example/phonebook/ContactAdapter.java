@@ -13,8 +13,8 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 public class ContactAdapter extends ArrayAdapter<Contact> {
-    private Context mContext;
-    private int mResource;
+    private final Context mContext;
+    private final int mResource;
 
     public ContactAdapter(Context context, int resource, List<Contact> contacts) {
         super(context, resource, contacts);
