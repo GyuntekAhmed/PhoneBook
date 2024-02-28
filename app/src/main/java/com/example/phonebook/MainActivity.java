@@ -2,18 +2,21 @@ package com.example.phonebook;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.phonebook.database.MyDatabaseHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ContactManager contactManager;
+    private MyDatabaseHelper dbHelper;
     private EditText editTextFirstName, editTextLastName, editTextPhoneNumber;
     private Button btnAddContact, btnSearchContact, btnDeleteContact;
     private ListView listViewContacts;
@@ -25,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contactManager = new ContactManager();
+        dbHelper = new MyDatabaseHelper(this);
         contactAdapter = new ContactAdapter(MainActivity.this, R.layout.list_item_contact, contacts);
 
         listViewContacts = findViewById(R.id.listViewContacts);
@@ -44,16 +47,18 @@ public class MainActivity extends AppCompatActivity {
             String lastName = editTextLastName.getText().toString();
             String phoneNumber = editTextPhoneNumber.getText().toString();
 
-            if (firstName.isEmpty() && phoneNumber.isEmpty()) {
+            if (firstName.isEmpty() || phoneNumber.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Моля попълнете празните полета", Toast.LENGTH_SHORT).show();
             } else {
-
-                if (contactManager.searchContact(phoneNumber) != null){
+                Cursor cursor = dbHelper.searchContact(phoneNumber);
+                if (cursor != null && cursor.moveToFirst()) {
+                    // Контактът вече съществува
                     Toast.makeText(MainActivity.this, "Телефонният номер вече съществува", Toast.LENGTH_SHORT).show();
+                    cursor.close(); // Затваряме Cursor, за да освободим ресурсите
                 } else {
-                    Contact newContact = new Contact(firstName, lastName, phoneNumber);
+                    dbHelper.addContact(firstName, lastName, phoneNumber);
 
-                    contactManager.addContact(newContact);
+                    Contact newContact = new Contact(firstName, lastName, phoneNumber);
                     contacts.add(newContact);
 
                     Collections.sort(contacts, (contact1, contact2) ->
@@ -86,13 +91,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (!keyword.isEmpty()) {
-                Contact foundContact = contactManager.searchContact(keyword);
+                Cursor foundContact = dbHelper.searchContact(keyword);
 
-                if (foundContact != null) {
-                    editTextFirstName.setText(foundContact.getFirstName());
-                    editTextLastName.setText(foundContact.getLastName());
-                    editTextPhoneNumber.setText(foundContact.getPhoneNumber());
+
+                if (foundContact != null && foundContact.moveToFirst()) {
+                    int firstNameIndex = foundContact.getColumnIndex(MyDatabaseHelper.COLUMN_FIRST_NAME);
+                    int lastNameIndex = foundContact.getColumnIndex(MyDatabaseHelper.COLUMN_LAST_NAME);
+                    int phoneNumberIndex = foundContact.getColumnIndex(MyDatabaseHelper.COLUMN_PHONE_NUMBER);
+
+                    editTextFirstName.setText(foundContact.getString(firstNameIndex));
+                    editTextLastName.setText(foundContact.getString(lastNameIndex));
+                    editTextPhoneNumber.setText(foundContact.getString(phoneNumberIndex));
                     Toast.makeText(MainActivity.this, "Контактът е намерен", Toast.LENGTH_SHORT).show();
+
                 } else {
                     editTextFirstName.setText("");
                     editTextLastName.setText("");
@@ -100,42 +111,35 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Контактът не съществува", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MainActivity.this, "Моля въведете име или телефонен номер за търсене", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Моля въведете име за търсене", Toast.LENGTH_SHORT).show();
             }
         });
 
         btnDeleteContact.setOnClickListener(v -> {
-            String firstName = editTextFirstName.getText().toString();
-            String lastName = editTextLastName.getText().toString();
-            String phoneNumber = editTextPhoneNumber.getText().toString();
+            String phoneNumber = editTextPhoneNumber.getText().toString().trim();
+            Cursor cursor = dbHelper.searchContact(phoneNumber);
 
-            String keyword = "";
+            if (cursor != null && cursor.moveToFirst()) {
+                int contactIdIndex = cursor.getColumnIndex(MyDatabaseHelper.COLUMN_ID);
 
-            if (!firstName.isEmpty()) {
-                keyword = firstName;
-            } else if (!lastName.isEmpty()) {
-                keyword = lastName;
-            } else if (!phoneNumber.isEmpty()) {
-                keyword = phoneNumber;
-            }
-
-            if (!keyword.isEmpty()) {
-
-                Contact contactToDelete = contactManager.searchContact(keyword);
-
-                if (contactToDelete != null) {
-                    contactManager.deleteContact(contactToDelete);
-                    contacts.remove(contactToDelete);
+                // Проверка дали _id колоната съществува в резултата от заявката
+                if (contactIdIndex != -1) {
+                    int contactId = cursor.getInt(contactIdIndex);
+                    dbHelper.deleteContact(contactId);
                     contactAdapter.notifyDataSetChanged();
-
                     Toast.makeText(MainActivity.this, "Контактът е изтрит успешно!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Грешка при изтриване на контакта", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(MainActivity.this, "Контактът не съществува", Toast.LENGTH_SHORT).show();
             }
 
             editTextFirstName.setText("");
             editTextLastName.setText("");
             editTextPhoneNumber.setText("");
         });
+
 
         listViewContacts.setOnItemClickListener((parent, view, position, id) -> {
             Contact selectedContact = (Contact) parent.getItemAtPosition(position);
