@@ -20,7 +20,7 @@
     <EditText
         android:id="@+id/editTextFirstName"
         android:layout_width="0dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:autofillHints=""
@@ -39,7 +39,7 @@
     <EditText
         android:id="@+id/editTextLastName"
         android:layout_width="0dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:layout_height="48dp"
         android:layout_below="@id/editTextFirstName"
         android:layout_marginTop="88dp"
@@ -57,7 +57,7 @@
     <EditText
         android:id="@+id/editTextPhoneNumber"
         android:layout_width="0dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:layout_height="48dp"
         android:layout_below="@id/editTextLastName"
         android:layout_marginTop="144dp"
