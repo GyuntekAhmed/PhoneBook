@@ -40,10 +40,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public void addContact(String firstName, String lastName, String phoneNumber) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("firstname", firstName);
-        values.put("lastname", lastName);
-        values.put("phonenumber", phoneNumber);
-        db.insert("contacts", null, values);
+        values.put(COLUMN_FIRST_NAME, firstName);
+        values.put(COLUMN_LAST_NAME, lastName);
+        values.put(COLUMN_PHONE_NUMBER, phoneNumber);
+        db.insert(TABLE_NAME, null, values);
         db.close();
     }
 
@@ -57,8 +57,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteContact(int contactId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("contacts", "_id = ?", new String[]{String.valueOf(contactId)});
+        db.delete(TABLE_NAME, "_id = ?", new String[]{String.valueOf(contactId)});
         db.close();
     }
 
+    public long getLastInsertedContactId() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long lastInsertedId = -1;
+
+        Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
+        if (cursor != null && cursor.moveToFirst()) {
+            lastInsertedId = cursor.getLong(0);
+            cursor.close();
+        }
+
+        return lastInsertedId;
+    }
 }

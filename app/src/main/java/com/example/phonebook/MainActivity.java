@@ -3,6 +3,7 @@ package com.example.phonebook;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         listViewContacts = findViewById(R.id.listViewContacts);
         listViewContacts.setAdapter(contactAdapter);
 
+        loadContacts();
+
         editTextFirstName = findViewById(R.id.editTextFirstName);
         editTextLastName = findViewById(R.id.editTextLastName);
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
@@ -52,12 +55,10 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Cursor cursor = dbHelper.searchContact(phoneNumber);
                 if (cursor != null && cursor.moveToFirst()) {
-                    // Контактът вече съществува
                     Toast.makeText(MainActivity.this, "Телефонният номер вече съществува", Toast.LENGTH_SHORT).show();
-                    cursor.close(); // Затваряме Cursor, за да освободим ресурсите
+                    cursor.close();
                 } else {
                     dbHelper.addContact(firstName, lastName, phoneNumber);
-
                     Contact newContact = new Contact(firstName, lastName, phoneNumber);
                     contacts.add(newContact);
 
@@ -93,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
             if (!keyword.isEmpty()) {
                 Cursor foundContact = dbHelper.searchContact(keyword);
 
-
                 if (foundContact != null && foundContact.moveToFirst()) {
                     int firstNameIndex = foundContact.getColumnIndex(MyDatabaseHelper.COLUMN_FIRST_NAME);
                     int lastNameIndex = foundContact.getColumnIndex(MyDatabaseHelper.COLUMN_LAST_NAME);
@@ -116,16 +116,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnDeleteContact.setOnClickListener(v -> {
+            String firstName = editTextFirstName.getText().toString().trim();
+            String lastName = editTextLastName.getText().toString().trim();
             String phoneNumber = editTextPhoneNumber.getText().toString().trim();
             Cursor cursor = dbHelper.searchContact(phoneNumber);
 
             if (cursor != null && cursor.moveToFirst()) {
                 int contactIdIndex = cursor.getColumnIndex(MyDatabaseHelper.COLUMN_ID);
 
-                // Проверка дали _id колоната съществува в резултата от заявката
                 if (contactIdIndex != -1) {
                     int contactId = cursor.getInt(contactIdIndex);
                     dbHelper.deleteContact(contactId);
+
+                    Contact deletedContact = new Contact(firstName, lastName, phoneNumber);
+                    contacts.remove(deletedContact);
+
                     contactAdapter.notifyDataSetChanged();
                     Toast.makeText(MainActivity.this, "Контактът е изтрит успешно!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -140,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
             editTextPhoneNumber.setText("");
         });
 
-
         listViewContacts.setOnItemClickListener((parent, view, position, id) -> {
             Contact selectedContact = (Contact) parent.getItemAtPosition(position);
             if (selectedContact != null) {
@@ -149,5 +153,30 @@ public class MainActivity extends AppCompatActivity {
                 editTextPhoneNumber.setText(selectedContact.getPhoneNumber());
             }
         });
+    }
+
+    private void loadContacts() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] columns = {MyDatabaseHelper.COLUMN_FIRST_NAME, MyDatabaseHelper.COLUMN_LAST_NAME, MyDatabaseHelper.COLUMN_PHONE_NUMBER};
+
+        Cursor cursor = db.query(MyDatabaseHelper.TABLE_NAME, columns, null, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int firstNameIndex = cursor.getColumnIndex(MyDatabaseHelper.COLUMN_FIRST_NAME);
+                int lastNameIndex = cursor.getColumnIndex(MyDatabaseHelper.COLUMN_LAST_NAME);
+                int phoneNumberIndex = cursor.getColumnIndex(MyDatabaseHelper.COLUMN_PHONE_NUMBER);
+
+                String firstName = cursor.getString(firstNameIndex);
+                String lastName = cursor.getString(lastNameIndex);
+                String phoneNumber = cursor.getString(phoneNumberIndex);
+
+                Contact contact = new Contact(firstName, lastName, phoneNumber);
+                contacts.add(contact);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+
+            contactAdapter.notifyDataSetChanged();
+        }
     }
 }
