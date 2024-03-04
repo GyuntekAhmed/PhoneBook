@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
     <TextView
@@ -21,8 +20,7 @@
         android:id="@+id/editTextFirstName"
         android:layout_width="0dp"
         android:layout_marginStart="5dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
         android:autofillHints=""
         android:background="#F5F5F5"
         android:hint="@string/Име"
@@ -84,38 +82,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#F5F5F5" >
+            android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/btnAddContact"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="@string/add_new_contact"
                 android:drawableLeft="@android:drawable/ic_menu_add"
-                android:text="@string/add" />
+                android:text="@string/add"
+                android:textColor="#00FF00" />
 
             <Button
                 android:id="@+id/btnSearchContact"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="@string/search_contact"
                 android:drawableLeft="@android:drawable/ic_menu_search"
-                android:text="@string/search" />
+                android:text="@string/search"
+                android:textColor="#00FF00" />
 
             <Button
                 android:id="@+id/btnDeleteContact"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="@string/delete_contact"
                 android:drawableLeft="@android:drawable/ic_menu_delete"
-                android:text="@string/delete" />
+                android:text="@string/delete"
+                android:textColor="#00FF00" />
         </LinearLayout>
 
         <LinearLayout
